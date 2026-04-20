@@ -67,7 +67,8 @@ cd [name_projet]
 
 2. **Configuration :**
 - Éditez le fichier `/data/security_baseline.csv` pour définir vos politiques de sécurité. 
-- Créez un fichier `.env` à la racine sur le modèle suivant :          *DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/xxxx*    `
+- Créez un fichier `.env` à la racine sur le modèle suivant :          
+```DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/xxxx```
 
 ## -------- Partie D. Automatisation (Crontab) -------- 
 Pour une surveillance continue, il est recommandé d'ajouter le script à la crontab de l'utilisateur root :
