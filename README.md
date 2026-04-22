@@ -7,11 +7,11 @@ Le script permet d'envoyer une **alerte de manière automatique** sur le **serve
 
 ## Sommaire 
 
-1. [Partie A - Presenation](#---------partie-a---présentation---------)
+1. [Partie A - Presentation](#---------partie-a---présentation---------)
 2. [Partie B - Fonctionnalités](#---------partie-b---fonctionnalités---------)
-3. [Partie C - Installation](#---------partie-c-installation---------)
+3. [Partie C - Installation](#---------partie-d-installation---------)
 4. [Partie D - Structuration-depot](#---------partie-c-structuration-depot---------)
-5. [Partie E - Automatisation-Crontab](#---------partie-d-automatisation-crontab---------)
+5. [Partie E - Automatisation-Crontab](#---------partie-e-automatisation-crontab---------)
 6. [Partie F - Guide de Réponse aux Incidents](#️-guide-de-réponse-aux-incidents-incident-response)
 
 
@@ -67,7 +67,7 @@ Le script permet d'envoyer une **alerte de manière automatique** sur le **serve
 └── README.md
 ```
 
-##  -------- Partie C. Installation -------- 
+##  -------- Partie D. Installation -------- 
 
 1. **Cloner le dépôt :**
 ```bash
@@ -80,7 +80,7 @@ cd [name_projet]
 - Créez un fichier `.env` à la racine sur le modèle suivant :          
 ```DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/xxxx```
 
-## -------- Partie D. Automatisation (Crontab) -------- 
+## -------- Partie E. Automatisation (Crontab) -------- 
 Pour une surveillance continue, il est recommandé d'ajouter le script à la crontab de l'utilisateur root :
 ```bash
 sudo crontab -e
@@ -88,7 +88,7 @@ sudo crontab -e
 Ajoutez la ligne suivante pour un audit toutes les heures :
 - ```0 * * * * /usr/bin/python3 /chemin/vers/audit.py```
 
-## -------- Partie E. Technologies utilisées -------- 
+## -------- Partie F. Technologies utilisées -------- 
 * **Langage :** Python 3.x
 * **Librairies :** python-dotenv, shutil, subprocess, psutil, os, time, csv, pwd, stat, json, requests, datetime
 * **OS :** Linux (Debian/Ubuntu recommandé)
