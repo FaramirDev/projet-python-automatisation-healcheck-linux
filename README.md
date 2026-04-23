@@ -1,4 +1,4 @@
-# 🛡️ Automatisation Python - SentinelAudit - Linux
+# 🛡️ Sentinel-Health : Audit Systeme Linux
 
 ## -------- Partie A - Présentation -------- 
 **SentinelAudit** est un outil d'automatisation d'**audit système** et de surveillance d'intégrité pour serveurs/client Linux. Développé en **Python**, il permet de **surveiller** la santé matérielle, l'**état** des services critiques et de **détecter** des dérives de configuration ou des modifications suspectes sur des fichiers sensibles.
@@ -160,4 +160,4 @@ Toute utilisation commerciale est strictement interdite sans autorisation préal
 
 ---
 - **Date** : 19/04/2026 
-- **Auteur** : Alexis Rousseau - **Administrateur systeme réseau & cybersécurité**
+- **Auteur** : Alexis Rousseau - **Ingénieur | Administrateur systeme réseau & cybersécurité**

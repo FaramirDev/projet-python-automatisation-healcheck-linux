@@ -2,11 +2,23 @@ import shutil, subprocess, psutil, os, time, csv, pwd, stat, json, requests
 from datetime import date, datetime
 from dotenv import load_dotenv
 
+## CARTOUCHE - Sentinel-Health
+# Autheur : Alexis Rousseau - Ingenieur | Admin Systeme Reseau et Cybersécurité
+# mail : alexisrousseau.work@proton.me
+# Date : 23/04/2026
+# Vesion : v2.1 
+# --
+# Description : Sentinel Heath est un outil d'Audit de systeme, Analysant l'état actuel de la machine, DISK, Service, Memoire
+# Audit des paths critiques Acces & Modification h-60 minutes pour une remonté d'alerte
+# Execution de Sentinel-Health toutes les 60 minutes & remonté d'Alerte via Discord
+# --
+# Tracabilité via une DATA centralisé des LOGS 
+# Script sous licence CC BY-NC 4.0
+
 ## Load env & path(for cron)
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv()
 
-########################################
 ########################################
 ##### 1er - Audit Systeme
 
