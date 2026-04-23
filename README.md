@@ -39,24 +39,23 @@ Le script permet d'envoyer une **alerte de manière automatique** sur le **serve
 
 3. **Remontée** d'alertes en temps réel via **Webhook Discord**.
     
-![capture remonte discrod](./captures/output_discord_01.png)
+![capture remonte discrod](./captures/output_discord_03.png)
 
-4. Permet de **suivre** l'Alerte **directement** sur Telephone.
+- Permet de **suivre** l'Alerte **directement** sur Telephone Egalement.
     
-![capture remonte android](./captures/android_discord.png)
 
-5. **Génération** de **rapports d'audit** structurés au format **JSON** pour l'historisation.
+4. **Génération** de **rapports d'audit** structurés au format **JSON** pour l'historisation.
 
 ![capture rapport json 01](./captures/output_json_01.png)
 ![capture rapport json 02](./captures/output_json_02.png)
 
-6. **Log** du Rapport dans la **console** egalement. 
+5. **Log** du Rapport dans la **console** egalement. 
 
 ![capture rapport console 01](./captures/output_console_01.png)
 ![capture rapport console 01](./captures/output_console_02.png)
 ![capture rapport console 01](./captures/output_console_03.png)
 
-7. **Sécurité :** Gestion des secrets via variables d'environnement (.env).
+6. **Sécurité :** Gestion des secrets via variables d'environnement (.env).
 
 ##  -------- Partie C. Structuration Depot --------  
 ```text
