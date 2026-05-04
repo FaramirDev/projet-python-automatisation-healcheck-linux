@@ -69,7 +69,8 @@ L'outil **Sentinel Audit Systeme** Linux fait partie de l'un des **modules** de 
 6. **Sécurité :** Gestion des secrets via variables d'environnement (.env).
 
 ##  • Structuration Depot
-```text
+
+```
 ├── data/              # Folder contenant data >> security_baseline.csv
 ├── logs/              # Folder Output Actuel des LOG en Json
 ├── captures/          # captures Readme
@@ -80,7 +81,8 @@ L'outil **Sentinel Audit Systeme** Linux fait partie de l'un des **modules** de 
 ##  • Installation
 
 1. **Cloner le dépôt :**
-```bash
+
+```Bash
 git clone [url depot]
 cd [name_projet]
 ```
@@ -92,9 +94,11 @@ cd [name_projet]
 
 ## • Automatisation (Crontab) 
 Pour une surveillance continue, il est recommandé d'ajouter le script à la crontab de l'utilisateur root :
-```bash
+
+```Bash
 sudo crontab -e
 ```
+
 Ajoutez la ligne suivante pour un audit toutes les heures :
 - ```0 * * * * /usr/bin/python3 /chemin/vers/audit.py```
 
@@ -113,8 +117,7 @@ Avant de conclure à une intrusion, il faut vérifier si le changement ne provie
 
 #### Vérifier les mises à jour système récentes :
 
-```
-Bash
+```Bash
 # Remplacez la date par la date du jour
 grep "install " /var/log/dpkg.log | grep "$(date +%Y-%m-%d)"
 ```
@@ -122,10 +125,10 @@ grep "install " /var/log/dpkg.log | grep "$(date +%Y-%m-%d)"
 
 #### Vérifier l'historique des commandes :
 
-```
-Bash
+```Bash
 history | tail -n 50
 ```
+
 *Vérifiez si vous (ou un autre administrateur) n'avez pas lancé une commande dont les effets auraient pu être différés.*
 
 ### --- Étape 2 : Analyse approfondie des modifications -------
@@ -133,8 +136,7 @@ Si aucune mise à jour n'est en cours, il faut identifier précisément quels fi
 
 #### Lister les fichiers modifiés dans les dernières 60 minutes :
 
-```
-Bash
+```Bash
 sudo find /etc /bin /sbin -mmin -60 -ls
 ```
 **Alerte Rouge** : Si des fichiers comme **/etc/passwd, /etc/shadow ou des binaires critiques (ls, ps, login)** apparaissent dans la liste sans raison valable, le système doit être considéré comme **compromis**.
@@ -144,8 +146,7 @@ Si une modification malveillante est suspectée, l'attaquant est peut-être enco
 
 #### Vérifier les utilisateurs connectés :
 
-```
-Bash
+```Bash
 who
 # ou
 w
@@ -153,8 +154,7 @@ w
 
 #### Analyser les connexions réseau établies :
 
-```
-Bash
+```Bash
 sudo ss -tunap | grep ESTAB
 ```
 **Cherchez** des adresses IP inconnues, particulièrement celles connectées sur le port 22 (SSH) ou via des processus suspects.
