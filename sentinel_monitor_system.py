@@ -2,11 +2,14 @@ import shutil, subprocess, psutil, os, time, csv, pwd, stat, json, requests
 from datetime import date, datetime
 from dotenv import load_dotenv
 
-## CARTOUCHE - Sentinel-Health
+# *************************************************************************************
+# ====== Cartouche SENTINEL HEALTH ====================================================
+
 # Autheur : Alexis Rousseau - Ingenieur | Admin Systeme Reseau et Cybersécurité
 # mail : alexisrousseau.work@proton.me
-# Date : 23/04/2026
-# Vesion : v2.1 - Modification de la mise en page d'alerte Discord avec payload
+# Date creation : 23/04/2026
+# Date Mise A jours : 02/05/2026
+# Vesion : v3.1 - Clean Code - Ajout Fonctionnalite Carte réseau & Check Connexion internet
 # --
 # Description : Sentinel Heath est un outil d'Audit de systeme, Analysant l'état actuel de la machine, DISK, Service, Memoire
 # Audit des paths critiques Acces & Modification h-60 minutes pour une remonté d'alerte
@@ -15,18 +18,36 @@ from dotenv import load_dotenv
 # Tracabilité via une DATA centralisé des LOGS 
 # Script sous licence CC BY-NC 4.0
 
-## Load env & path(for cron)
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+# *************************************************************************************
+# ====== 1er PARTIE CONFIGURATION =====================================================
+
+# --- 1.1 Load env & path(for cron) ---------------------------------------------------
 load_dotenv()
 
-########################################
-##### 1er - Audit Systeme
-
-## Def Variable -- Audit Machine Systeme
+# --- 1.2 LOADPATH & VAR SERVICE  -----------------------------------------------------
 path="/"
-list_service = ["ssh","ufw"]
+path_write_log = "data/logs_system/"
+os.makedirs(path_write_log, exist_ok=True)
 
-## Def Fonction -- AUDIT Machine Systeme
+# --- LIST SERVICE TO CHECK  ----------------------------------------------------------
+list_service = ["ssh","ufw","docker","mysql","sentinel-log.service"]
+
+
+## --- 1.3 DATA CYBER  ----------------------------------------------------------------
+data_csv_security = "data/security_baseline.csv"
+data_all_security = {}
+
+## --- 1.4 WEBHOOB  -------------------------------------------------------------------
+WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL_SYSTEM")   
+
+if not WEBHOOK_URL:
+    print("ERROR de chargement de l'url Webook")
+
+
+# *************************************************************************************
+# ====== FONCTION TOOLS ===============================================================
+
 def afficher_date():
     date_actuel = datetime.now().strftime("%Y-%m-%d-%H%M")
     print("\n=================")
@@ -140,7 +161,7 @@ def check_memory_high():
     print("\n===========================================")
     print("----- Check most HIGH Process Memory ------")
     start = 1
-    max = 4
+    max = 6
     
     ## Dic Data Process
     dic_data_process_high = {}
@@ -240,13 +261,24 @@ def afficher_systeme():
 
     return dict_systeme
 
-## Start Fonction -- AUDIT Machine Systeme 
+def check_cup_():
+    data_cpu = {}
+
+    cpu_load = psutil.cpu_percent(interval=1)
+    data_cpu["charge_cpu"] = cpu_load
+
+    return data_cpu
+
+# *************************************************************************************
+# ====== APPLY FONCTION n°1 - RECUP DATA ==============================================
+
 actuel_date = afficher_date()
 data_sys = afficher_systeme()
 data_disk = recup_etat_disk(path)
 data_service = check_service(list_service)
 data_memory = check_memory()
 data_memory_high = check_memory_high()
+data_cpu = check_cup_()
 
 ## All Data -- AUDIT Machine Setup
 data_check_machine = {}
@@ -256,10 +288,10 @@ data_check_machine["data_disk"] = data_disk
 data_check_machine["data_service"] = data_service
 data_check_machine["data_memory"] = data_memory
 data_check_machine["data_memory_high"] = data_memory_high
+data_check_machine["data_cpu"] = data_cpu
 
-################################
-################################
-####### 2e - PARTIE Audit Cyber
+# *************************************************************************************
+# ====== APPLY FONCTION n° 2 ==========================================================
 
 ## 1. Def Fonction Check Cyber
 def convert_second_to_dhms(input_sec):
@@ -369,11 +401,6 @@ def check_permission(data):
 
     return data
     
-## 2.DATA Cyber Recup et Setup
-data_csv_security = "data/security_baseline.csv"
-data_all_security = {}
-
-## 3. def fc Open & Read CSV
 def start_audit_data(data_audit_csv, data_audit_all):
     with open(data_audit_csv, newline ='') as f:
         reader = csv.reader(f)
@@ -422,70 +449,6 @@ def start_audit_data(data_audit_csv, data_audit_all):
         
     return data_audit_all
 
-data_all_security = start_audit_data(data_csv_security,data_all_security)
-
-#####################################
-#####################################
-######## 3e - PARTIE Write LOG - Json
-path_write_log = "logs/"
-## Check or Write PATH log
-os.makedirs("logs", exist_ok=True)
-
-## Setup Name File log
-nom_machine_recup = data_check_machine["data_sys"]["name_machine"]
-nom_fichier_log = f"logs/AUDIT_{actuel_date}_{nom_machine_recup}.json"
-
-## RECUP ALL DATA System & Audit Secu
-data_all_audit = {}
-data_all_audit["data_systeme"] = data_check_machine
-data_all_audit["data_audit_security"] = data_all_security
-
-## Variable recup statut to send message discord
-statut_to_send = []
-
-## AUDIT recup Alerte pour remonte Alerte message sur discord
-for data in data_all_audit: 
-    recup_dict_data = data_all_audit[data]
-    for key in recup_dict_data:
-        recup_donne = recup_dict_data[key]
-        if type(recup_donne) == str:
-            pass
-        else:
-            for donne in recup_donne:
-                recuperer_value = recup_donne[donne]
-                if type(recuperer_value) == str:
-                    split_recuperer_value = recuperer_value.split(" ")
-                    if "🟠" in split_recuperer_value or "🔴" in split_recuperer_value:
-                        statut_to_send.append(recuperer_value)
-
-## Print for Console  
-print(">>Warning Statut : ")       
-print(statut_to_send)
-
-### Ecriture du FICHIER Log .json
-with open(nom_fichier_log, "w") as f:
-    json.dump(data_all_audit, f, indent=4)
-    print(f"\n>> Rapport Sauvegardé : {nom_fichier_log}")
-
-### URL Discord
-WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")   
-
-### VERIF Etat URL
-if not WEBHOOK_URL:
-    print("ERROR de chargement de l'url Webook")
-
-### RECUPERER Nb d'alerte 
-recupere_nb_alerte = len(statut_to_send)
-
-### Setup Message to Send ALERTE
-alerte_message = f"Machine : {nom_machine_recup} | Nombre d'Alerte : {recupere_nb_alerte} \n>> {nom_fichier_log} \n{statut_to_send} " 
-## Print For sonsole
-print(alerte_message)
-
-# TRANSFORMATION la liste en texte, une alerte par ligne
-message_formate = "\n".join(statut_to_send) if statut_to_send else "Aucune alerte."
-
-## FONCTION TO SEND DISCORD 
 def send_discord_alerte(liste_alertes, name_machine, nombre_alerte, path_log_audit, color=15158332):
     # Transformation de la liste en chaîne de caractères pour l'embed
     alertes_texte = "\n".join(liste_alertes)
@@ -535,8 +498,63 @@ def send_discord_alerte(liste_alertes, name_machine, nombre_alerte, path_log_aud
     except Exception as e:
         print(f"❌ Erreur de connexion : {e}")
 
+def ecriture_fichier_log(nom_files, data_to_write):
+    with open(nom_files, "w") as f:
+        json.dump(data_to_write, f, indent=4)
 
-## Envoie requette to discord
+def statut_to_send(all_data_audit):
+    statut_to_send = []
+
+    ## --- AUDIT recup Alerte pour remonte Alerte message sur discord  ---------------------
+    for data in all_data_audit: 
+        recup_dict_data = all_data_audit[data]
+        for key in recup_dict_data:
+            recup_donne = recup_dict_data[key]
+            if type(recup_donne) == str:
+                pass
+            else:
+                for donne in recup_donne:
+                    recuperer_value = recup_donne[donne]
+                    if type(recuperer_value) == str:
+                        split_recuperer_value = recuperer_value.split(" ")
+                        if "🟠" in split_recuperer_value or "🔴" in split_recuperer_value:
+                            statut_to_send.append(recuperer_value)
+
+    return statut_to_send
+
+data_all_security = start_audit_data(data_csv_security,data_all_security)
+
+# *************************************************************************************
+# ====== PARTIE 3 - ECRITURE LOG ======================================================
+
+## --- Setup Name File log  ------------------------------------------------------------
+nom_machine_recup = data_check_machine["data_sys"]["name_machine"]
+nom_fichier_log = f"logs/AUDIT_{actuel_date}_{nom_machine_recup}.json"
+
+## --- RECUP ALL DATA System & Audit Secu  ---------------------------------------------
+data_all_audit = {}
+data_all_audit["data_systeme"] = data_check_machine
+data_all_audit["data_audit_security"] = data_all_security
+
+# ---- STATUS TO SEND -----------------------------------------------
+statut_to_send = statut_to_send(data_all_audit)
+
+# --- ECRITURE DU FICHIER LOG ----------------------------------------
+ecriture_fichier_log(nom_fichier_log, data_all_audit)
+
+# --- RECUPERER Nb d'alerte ------------------------------------------
+recupere_nb_alerte = len(statut_to_send)
+
+# --- Setup Message to Send ALERTE  ---------------------------------------------------
+alerte_message = f"Machine : {nom_machine_recup} | Nombre d'Alerte : {recupere_nb_alerte} \n>> {nom_fichier_log} \n{statut_to_send} " 
+
+# --- TRANSFORMATION la liste en texte, une alerte par ligne  -------------------------
+message_formate = "\n".join(statut_to_send) if statut_to_send else "Aucune alerte."
+
+
+# *************************************************************************************
+# ====== PARTIE - ENVOI ALERTE  =======================================================
+
 if recupere_nb_alerte != 0:
     send_discord_alerte(statut_to_send, nom_machine_recup, recupere_nb_alerte, nom_fichier_log)
     
