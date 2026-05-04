@@ -10,11 +10,11 @@
 Le script permet d'envoyer une **alerte de manière automatique** sur le **serveur Discord** avec le **statut** des alertes audités. 
 
 ---
-Le script s'inscrit dans une démarche ede projet personnel autour de la création d'outils pour l'Audit et d'un projet de construction **SIEM** développé en Python.
+Le script Sentinel-Health s'inscrit dans une démarche de projet personnel autour de developpement d'outils pour un projet de construction de **SIEM** développé en Python.
 
 L'outil **Sentinel Audit Systeme** Linux fait partie de l'un des **modules** de mon **projet Sentinel SIEM**, que vous pouvez décourir ici : 
 
- - [📂 **Depot Github Projet Sentinel SIEM & HIDS**](https://github.com/FaramirDev/projet-sentinel-siem-hids)
+ - [📂 **Depot Github - Projet Sentinel SIEM & HIDS**](https://github.com/FaramirDev/projet-sentinel-siem-hids)
 
 ## • Sommaire 
 
